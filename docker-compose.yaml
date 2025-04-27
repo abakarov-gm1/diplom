@@ -1,0 +1,52 @@
+services:
+
+  client-node:
+    build:
+      context: client/
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/app
+    networks:
+      - my_custom_network
+
+  api-fastapi:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    networks:
+      - my_custom_network
+    environment:
+      UPLOAD_DIR: uploads
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: app
+
+  database:
+    image: postgres:14.1-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: openai
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    networks:
+      - my_custom_network
+    ports:
+      - "5433:5432"
+
+
+
+networks:
+  my_custom_network:
+    external: true
+
+volumes:
+  db-volume:
+    driver: local
+
