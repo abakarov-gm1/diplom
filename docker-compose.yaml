@@ -26,19 +26,20 @@ services:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: app
+      JWT_SECRET_KEY: "secret"
 
   database:
     image: postgres:14.1-alpine
     environment:
-      POSTGRES_USER: user
+      POSTGRES_USER: app
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: openai
+      POSTGRES_DB: app
     volumes:
       - db-volume:/var/lib/postgresql/data
     networks:
       - my_custom_network
     ports:
-      - "5433:5432"
+      - "5432:5432"
 
 
 
