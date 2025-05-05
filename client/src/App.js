@@ -3,6 +3,7 @@ import './App.css';
 import "./components/auth/AuthForm"
 import AuthForm from "./components/auth/AuthForm";
 import Dashboard from "./components/statements/Dashborad";
+import MonitoringIndex from "./components/monitoringStatements";
 
 function App() {
   return (
@@ -10,8 +11,11 @@ function App() {
       //     Hello world!
       // </h1>
       // <AuthForm />
+<>
       <Dashboard />
 
+      <MonitoringIndex />
+</>
   );
 }
 

@@ -10,7 +10,4 @@ class StudentExam(Base):
     student_id = Column(Integer, ForeignKey('student.id'))
     exam_id = Column(Integer, ForeignKey('exam.id'))
 
-    # Связи
-    student = relationship('Student', back_populates='exams')
-    exam = relationship('Exam', back_populates='students')
 

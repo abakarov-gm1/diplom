@@ -1,21 +1,4 @@
-# from sqlalchemy.orm import relationship
-# from .base import Base
-# from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-#
-#
-# # направление подготовки
-# class Direction(Base):
-#     __tablename__ = 'direction'
-#
-#     id = Column(Integer, primary_key=True)
-#     name = Column(String)
-#     code = Column(Integer)
-#
-#     # связь с заявкой
-#     statement = relationship("Statement", back_populates="direction")
-#
-#
-# models/direction.py
+# направление подготовки
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String
 from .base import Base

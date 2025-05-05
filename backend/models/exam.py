@@ -12,5 +12,9 @@ class Exam(Base):
     score = Column(Integer)  # Балл за предмет
 
     # Связь с таблицей student_exam
-    students = relationship('StudentExam', back_populates='exam')
+    students = relationship(
+        'Student',
+        secondary="student_exam",
+        back_populates='exams'
+    )
 

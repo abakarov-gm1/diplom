@@ -18,7 +18,11 @@ class Student(Base):
     status = Column(String, nullable=False)
 
     # Связь с экзаменами
-    exams = relationship('StudentExam', back_populates='student')
+    exams = relationship(
+        'Exam',
+        secondary='student_exam',
+        back_populates='students'
+    )
 
     # Связь с заявками
     statements = relationship('Statement', back_populates='student')
