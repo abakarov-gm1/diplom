@@ -17,11 +17,12 @@ export default function ContestTable({
         size=49,
         columns,
         rows,
+        setTest
         }) {
 
-    const [direction, setDirection] = useState()
-
-    console.log(direction, "DIRECTION")
+    // const [direction, setDirection] = useState()
+    //
+    // console.log(direction, "DIRECTION")
 
     return (
         <div style={{width:`${size}%`, margin:"1%"}}>
@@ -47,7 +48,7 @@ export default function ContestTable({
                                                 backgroundColor: colIndex === 0 ? "#1e1e2f" : "rgba(37,40,103,0.72)",
                                                 color: "white"
                                             }}
-                                            onClick={()=>{setDirection(row.code)}}
+                                            onClick={()=>{setTest(row.code)}}
                                         >
                                             {colIndex === 0 ? (
                                                 row.code // первая колонка — без "барчика"

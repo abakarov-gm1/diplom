@@ -6,3 +6,5 @@ from .student_exam import StudentExam
 from .statements import Statement
 from .direction_statement import DirectionStatement
 from .direction import Direction
+from .entity import Entity
+from .actions import Actions
