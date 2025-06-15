@@ -3,7 +3,7 @@ from models.CompetitionList import Competition
 from sqlalchemy.orm import joinedload
 
 
-def get_add_competition_bulk(competition: list[dict]):
+def add_competition_bulk(competition: list[dict]):
 
     with get_session() as session:
         try:

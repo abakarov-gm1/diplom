@@ -7,3 +7,5 @@ from .CompetitionList import Competition
 from .CompetitionGroupModel import CompetitionGroup
 from .StatusCompetition import StatusCompetition
 from .entity import Entity
+from .EntrantList import Entrant
+

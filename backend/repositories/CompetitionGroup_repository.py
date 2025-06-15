@@ -3,9 +3,6 @@ from models import CompetitionGroup
 from sqlalchemy.orm import joinedload
 
 
-
-
-
 def get_competition_group_id_array():
     with get_session() as session:
         id_array = [item.competition_id for item in session.query(CompetitionGroup.competition_id).all()]

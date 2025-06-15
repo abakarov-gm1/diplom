@@ -11,46 +11,34 @@ import Chance from 'chance';
 
 const chance = new Chance(42);
 
-function createData(id) {
-    return {
-        id,
-        firstName: chance.first(),
-        lastName: chance.last(),
-        age: chance.age(),
-        phone: chance.phone(),
-        state: chance.state({ full: true }),
-    };
-}
 
 const columns = [
     {
         width: 100,
         label: 'Специальность',
-        dataKey: 'firstName',
+        dataKey: 'comment',
     },
     {
         width: 100,
         label: 'КПЦ',
-        // dataKey: 'lastName',
-        dataKey: 'age',
+        dataKey: 'number_places',
         numeric: true,
     },
     {
         width: 50,
         label: 'Подано',
-        dataKey: 'age',
+        dataKey: 'count_pod',
         numeric: true,
     },
     {
         width: 60,
         label: 'Зачисленно',
         // dataKey: 'state',
-        dataKey: 'age',
+        dataKey: 'zach_pod',
         numeric: true,
     },
 ];
 
-const rows = Array.from({ length: 200 }, (_, index) => createData(index));
 
 const VirtuosoTableComponents = {
     Scroller: React.forwardRef((props, ref) => (
@@ -97,11 +85,13 @@ function rowContent(_index, row) {
     );
 }
 
-export default function ReactVirtualizedTable() {
+
+
+export default function ReactVirtualizedTable({competitionGroup}) {
     return (
         <Paper style={{ height: 562, width: '100%'}}>
             <TableVirtuoso
-                data={rows}
+                data={competitionGroup}
                 components={VirtuosoTableComponents}
                 fixedHeaderContent={fixedHeaderContent}
                 itemContent={rowContent}

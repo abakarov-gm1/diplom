@@ -38,6 +38,6 @@ async def update():
     return data
 
 
-@router.get("/Abakarov")
-def get_abakarov():
-    return abakarov()
+# @router.get("/Abakarov")
+# def get_abakarov():
+#     return abakarov()

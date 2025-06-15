@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { Card } from "./Card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 // import StickyHeadTable from "../components/Tables"
@@ -6,6 +6,50 @@ import ReactVirtualizedTable from "./Tables"
 import SubmissionMethodChart from "./CardStatements";
 import SubmissionDynamicsChart from "./charts";
 const Dashboard = () => {
+
+    const [tableData, setTableData] = useState([]);
+    const [isConnected, setIsConnected] = useState(false);
+    const ws = useRef(null);
+
+    useEffect(() => {
+        const socketUrl = `ws://localhost:8000/ws/1/your_token_here`;
+        ws.current = new WebSocket(socketUrl);
+
+        ws.current.onopen = () => {
+            console.log('WebSocket connected');
+            setIsConnected(true);
+        };
+
+        ws.current.onmessage = (event) => {
+            try {
+                const message = JSON.parse(event.data);
+                console.log('Received:', message);
+                // setTableData(...[message]);
+                setTableData(message);
+
+            } catch (e) {
+                console.error('Error parsing message:', e);
+            }
+        };
+
+        ws.current.onclose = () => {
+            console.log('WebSocket disconnected');
+            setIsConnected(false);
+        };
+
+        ws.current.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        return () => {
+            if (ws.current) {
+                ws.current.close();
+            }
+        };
+    }, []);
+
+    console.log(tableData)
+
     return (
         <div>
             <div style={{display:"flex"}}>
@@ -23,7 +67,7 @@ const Dashboard = () => {
 
                     </div>
                     <div style={{marginTop:"18px"}}>
-                        <ReactVirtualizedTable/>
+                        <ReactVirtualizedTable competitionGroup={tableData}/>
                     </div>
                 </div>
 

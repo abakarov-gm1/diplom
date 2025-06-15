@@ -8,7 +8,10 @@ import requests
 import urllib3
 
 from .application import get_full_applications
-from repositories.Competition_repository import get_add_competition_bulk
+from repositories.Competition_repository import add_competition_bulk
+
+from repositories.entrant_repository import add_all_entrant
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # from new_session import session_key
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -82,11 +85,15 @@ def get_xml_entity(action: str, entity: str, flag):
             return {"Message": "success"}
 
         if entity == "CompetitionList" and flag:
-            get_add_competition_bulk(c['SuccessResultList']['Competition'])
+            add_competition_bulk(c['SuccessResultList']['Competition'])
             return {"Message": "success"}
+
+        if entity == "EntrantList" and flag:
+            add_all_entrant(c['SuccessResultList']['Entrant'])
 
         return c
 
     except Exception as e:
         return {"message_error": e}
+
 
