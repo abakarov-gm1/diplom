@@ -3,7 +3,7 @@ import React from "react";
 const SubmissionMethodChart = () => {
     const data = [
         { label: "Лично", value: 46.07, color: "#8b5cf6" },      // фиолетовый
-        { label: "Веб", value: 35.06, color: "#0e7490" },         // сине-зеленый
+                // сине-зеленый
         { label: "Суперсервис", value: 18.87, color: "#312e81" }, // темно-синий
     ];
 

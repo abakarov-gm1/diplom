@@ -58,11 +58,11 @@ const Dashboard = () => {
                 <div style={{width:"35%"}}>
                     <div style={{display: "flex", margin: "6px"}}>
                         <div style={{width: "50%"}}>
-                            <Card title="Всего абитуриентов" value="5922"></Card>
+                            <Card title="Всего абитуриентов" value={tableData[0]?.all_count_entrant}></Card>
                         </div>
                         <div style={{width: "50%"}}>
-                            <Card title="РФ" value="2902" size="sm"></Card>
-                            <Card title="Иностранные" value="1444" size="sm"></Card>
+                            <Card title="РФ" value={tableData[0]?.all_count_russian} size="sm"></Card>
+                            <Card title="Иностранные" value={tableData[0]?.all_count_english} size="sm"></Card>
                         </div>
 
                     </div>
@@ -87,10 +87,10 @@ const Dashboard = () => {
                     </div>
 
                     <div style={{display:"flex", height:"15%"}}>
-                        <Card value="302" w="l"/>
-                        <Card value="42322" title='подано' w="l"/>
-                        <Card value="402" title='отозвано' w="l"/>
-                        <Card value="26" w="l"/>
+                        <Card value={tableData[tableData.length - 1]?.all_number_places} w="l"/>
+                        <Card value={tableData[tableData.length - 1]?.all_applications} title='подано' w="l"/>
+                        <Card value={tableData[tableData.length - 1]?.all_status_enrolled} title='отозвано' w="l"/>
+                        <Card value={tableData[tableData.length - 1]?.all_status_refusal} w="l"/>
                     </div>
 
                     <div style={{height: "30%", display: "flex", justifyContent:"center", marginTop:"10px"}}>

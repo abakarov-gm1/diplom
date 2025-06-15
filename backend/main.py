@@ -23,7 +23,7 @@ def main():
 
 @app.get("/entrant")
 def get_entrants():
-    get_all_entrant()
+    return get_all_entrant()
 
 
 @app.get("/test")
@@ -56,7 +56,8 @@ class ConnectionManager:
 
 
 manager = ConnectionManager()
-
+# manager2 = ConnectionManager()
+#
 
 @app.websocket("/ws/{chat_id}/{token}")
 async def websocket_endpoint(websocket: WebSocket, chat_id: int, token: str):
@@ -65,16 +66,83 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: int, token: str):
     try:
 
         groups = abakarov()
+        entrant = get_all_entrant()
+        is_russian = 0
+        is_english = 0
 
-        data = [
-            {
-                "id": item.id,
-                "comment": item.comment,
-                "number_places": item.number_places,
-                "count_pod": len(item.groups),
-                "zach_pod": 0
-            }
-            for item in groups]
+        for i in entrant:
+            if i.snils == 'true':
+                is_russian += 1
+            else:
+                is_english += 1
+
+        # data = [
+        #     {
+        #         "id": item.id,
+        #         "comment": item.comment,
+        #         "number_places": item.number_places,
+        #         "count_pod": len(item.groups),
+        #         "zach_pod": 0,
+        #         "all_count_entrant": len(entrant),
+        #         "all_count_russian": is_russian,
+        #         "all_count_english": is_english
+        #     }
+        #     for item in groups]
+        data = []
+
+        all_number_places = 0
+        all_applications = 0
+        all_status_enrolled = 0
+        all_status_refusal = 0
+        count_egpy = 0
+        count_not_egpy = 0
+
+        for item in groups:
+            all_number_places += item.number_places
+            all_applications += len(item.groups)
+
+            if type(item.groups) is list:
+                for group in item.groups:
+                    if group.is_ovo:
+                        count_egpy += 1
+                    elif group.is_ovo is False:
+                        count_not_egpy += 1
+
+                    if group.status_id == 19:
+                        all_status_enrolled += 1
+                    elif group.status_id in [15, 14, 10, 12]:
+                        all_status_refusal += 1
+
+            elif type(item.groups) is dict:
+                if item.is_ovo:
+                    count_egpy += 1
+                elif item.is_ovo is False:
+                    count_not_egpy += 1
+
+                if item.status_id == 19:
+                    all_status_enrolled += 1
+                elif item.status_id in [15, 14, 10, 12]:
+                    all_status_refusal += 1
+
+            data.append(
+                {
+                    "id": item.id,
+                    "comment": item.comment,
+                    "number_places": item.number_places,
+                    "count_pod": len(item.groups),
+                    "zach_pod": 0,
+                    "all_count_entrant": len(entrant),
+                    "all_count_russian": is_russian,
+                    "all_count_english": is_english,
+                    "all_number_places": all_number_places,
+                    "all_applications": all_applications,
+                    "all_status_refusal": all_status_refusal,
+                    "all_status_enrolled": all_status_enrolled,
+                    "count_not_egpy": count_not_egpy,
+                    "count_egpy": count_egpy
+                }
+            )
+
         await websocket.send_text(json.dumps(data))
 
         while True:
@@ -94,3 +162,4 @@ async def websocket_endpoint(websocket: WebSocket, chat_id: int, token: str):
     except Exception as e:
         print(e, "message.user => not found")
         manager.disconnect(websocket)
+
