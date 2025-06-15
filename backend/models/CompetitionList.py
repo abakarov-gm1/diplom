@@ -1,12 +1,12 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String, Boolean, UUID
+from sqlalchemy import Column, Integer, String, Boolean, UUID, BigInteger
 from .base import Base
 
 
 class Competition(Base):
     __tablename__ = 'competitions'
 
-    id = Column(Integer, primary_key=True)  # Уникальный идентификатор записи (Id)
+    id = Column(BigInteger, primary_key=True)  # Уникальный идентификатор записи (Id)
     uid = Column(UUID(as_uuid=True), unique=True, nullable=True)  # Уникальный идентификатор (Uid)
 
     ogrn_owner_organization = Column(String(20), nullable=True)  # ОГРН организации-владельца (OgrnOwnerOrganization)
@@ -38,3 +38,5 @@ class Competition(Base):
 
     cost_of_study = Column(Integer, nullable=False, default=0)  # Стоимость обучения (CostOfStudy)
     approved_foiv = Column(Boolean, default=False)  # Программа утверждена ФОИВ (федеральным органом) (ApprovedFoiv)
+
+    groups = relationship("CompetitionGroup", back_populates="competition")

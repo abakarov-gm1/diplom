@@ -1,5 +1,6 @@
 from config import get_session
 from models.CompetitionList import Competition
+from sqlalchemy.orm import joinedload
 
 
 def get_add_competition_bulk(competition: list[dict]):
@@ -57,6 +58,11 @@ def get_all_competition():
         return session.query(Competition).all()
 
 
+def abakarov():
+    with (get_session() as session):
+        id_array = session.query(Competition).options(joinedload(Competition.groups))\
+                      .all()
+        return id_array
 
 
 

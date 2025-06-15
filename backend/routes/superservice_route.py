@@ -8,6 +8,10 @@ from service.superservice.token_new import get_xml_entity
 
 from service.superservice.competition_service import generate
 
+from repositories.CompetitionGroup_repository import get_competition_group_id_array
+
+from repositories.Competition_repository import abakarov
+
 router = APIRouter()
 
 
@@ -29,8 +33,11 @@ def get_cls(cls: str):
 
 
 @router.get("/update/competition")
-def update():
-    return generate()
+async def update():
+    data = await generate()
+    return data
 
 
-
+@router.get("/Abakarov")
+def get_abakarov():
+    return abakarov()

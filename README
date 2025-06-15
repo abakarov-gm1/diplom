@@ -1,11 +1,11 @@
-1 - для добавления directionCls
-super-service/get/cls?cls=DirectionCls
-кинуть запрос с ключем DirectionCls
-
-2 - сделать запрос на EducationLevelCls
-3 - CompetitiveGroupStatusCls
-
-
-4 - CompetitionList сущность можно добавить сразу в этом проблем нет
+1 - add dump for entity and action
+2 - add directionCls -> super-service/get/cls?cls=DirectionCls  key -> DirectionCls
+3 - add EducationLevelCls
+4 - add CompetitiveGroupStatusCls
+5 - CompetitionList сущность нужно добавить сразу -> запрос по  super-service/token/new -> true
+    -> entity CompetitionList -> action-> GetAll
+6 - CompetitionGroupList
+    -> будет добавляться автоматически, при первой инициализации приложения потребуется больше времени
+    -> при условии что CompetitionList существует в бд
 
 
