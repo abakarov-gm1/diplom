@@ -3,6 +3,7 @@ from .base import Base
 from sqlalchemy.orm import relationship
 
 
+
 class Actions(Base):
     __tablename__ = 'actions'
 

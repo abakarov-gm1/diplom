@@ -5,11 +5,16 @@ import base64
 import time
 
 import requests
+import urllib3
+
+from .application import get_full_applications
+from repositories.Competition_repository import get_add_competition_bulk
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # from new_session import session_key
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from repositories.entity_repository import EntityRepository
 from config import redis_client
-from .convert_entity_json import convert_entity_json
+from .parse_xml import convert_xml_json
 
 url = "https://vo-online-test.citis.ru:8100/api/token/new"
 url_own = "https://vo-online-test.citis.ru:8100/api/token/own/get"
@@ -28,7 +33,7 @@ def decode_payload_base64(payload_base64):
     return decoded_str
 
 
-def get_xml_entity(action: str, entity: str):
+def get_xml_entity(action: str, entity: str, flag):
     j = EntityRepository()
     entity_object = j.get_entity(entity)
 
@@ -70,7 +75,16 @@ def get_xml_entity(action: str, entity: str):
 
         payload_base = r["payload_base64"]
 
-        c = convert_entity_json(entity_object.entity, decode_payload_base64(payload_base))
+        c = convert_xml_json(decode_payload_base64(payload_base))
+
+        if entity == "ApplicationList" and flag:
+            get_full_applications(c["SuccessResultList"]['Application'])
+            return {"Message": "success"}
+
+        if entity == "CompetitionList" and flag:
+            get_add_competition_bulk(c['SuccessResultList']['Competition'])
+            return {"Message": "success"}
+
         return c
 
     except Exception as e:

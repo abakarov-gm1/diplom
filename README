@@ -1,0 +1,11 @@
+1 - для добавления directionCls
+super-service/get/cls?cls=DirectionCls
+кинуть запрос с ключем DirectionCls
+
+2 - сделать запрос на EducationLevelCls
+3 - CompetitiveGroupStatusCls
+
+
+4 - CompetitionList сущность можно добавить сразу в этом проблем нет
+
+

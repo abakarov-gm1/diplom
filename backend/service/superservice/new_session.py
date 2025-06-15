@@ -13,7 +13,7 @@ def encoded_data():
 
 
 def encode_signed_file_to_base64():
-    file_path = os.path.join(os.path.dirname(__file__), "signed_data.p7s")
+    file_path = os.path.join(os.path.dirname(__file__), "06_Signed_Data.p7s")
 
     with open(file_path, "rb") as file:
         file_data = file.read()
@@ -34,10 +34,6 @@ data = {
 }
 
 
-# print(data)
-# print(headers)
-
-
 def get_session():
     response = requests.post(
         "https://vo-online-test.citis.ru:8100/api/session/new",
@@ -45,11 +41,6 @@ def get_session():
         headers=headers,
         verify=False
     )
-
     resp = response.json()
-    # data_json == resp
-    # resp = {
-    #     "Session-Key": "skey+189df65f8389d61c93ca0443d94e19de46337cb4+2025-05-18_04-57"
-    # }
     redis_client.set("session-key", resp["Session-Key"], ex=43200)
     return resp["Session-Key"]
