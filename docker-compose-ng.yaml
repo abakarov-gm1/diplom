@@ -17,8 +17,8 @@ services:
 
   client:
     build:
-      context: ./client/nginx/prod
-      dockerfile: Dockerfile
+      context: ./client
+      dockerfile: nginx/prod/Dockerfile
     ports:
       - "80:80"
     volumes:
@@ -29,14 +29,14 @@ services:
     networks:
       - my_custom_network
 
-  client-node:
-    build:
-      context: client/
-      dockerfile: docker/Dockerfile
-    volumes:
-      - ./client:/app
-    networks:
-      - my_custom_network
+#  client-node:
+#    build:
+#      context: client/
+#      dockerfile: docker/Dockerfile
+#    volumes:
+#      - ./client:/app
+#    networks:
+#      - my_custom_network
 
   api-fastapi:
     build:
@@ -95,3 +95,5 @@ volumes:
   db-volume:
     driver: local
   letsencrypt:
+
+
