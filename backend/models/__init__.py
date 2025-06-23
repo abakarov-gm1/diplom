@@ -8,4 +8,5 @@ from .CompetitionGroupModel import CompetitionGroup
 from .StatusCompetition import StatusCompetition
 from .entity import Entity
 from .EntrantList import Entrant
+from .ApplicationList import ApplicationList
 

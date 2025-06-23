@@ -1,11 +1,39 @@
 services:
 
+
+  api:
+    build:
+      context: ./backend/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - api-fastapi
+      - client-node
+    networks:
+      - my_custom_network
+
+  client:
+    build:
+      context: ./client/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8002:80"
+    volumes:
+      - ./client:/app
+    depends_on:
+      - api-fastapi
+      - client-node
+    networks:
+      - my_custom_network
+
   client-node:
     build:
       context: client/
       dockerfile: docker/Dockerfile
-    ports:
-      - "3000:3000"
     volumes:
       - ./client:/app
     networks:
@@ -15,8 +43,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
     volumes:
       - ./backend:/app
     networks:
@@ -45,6 +71,18 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    networks:
+      - my_custom_network
+
+  cron:
+    build:
+      context: ./cron
+      dockerfile: Dockerfile
+    container_name: cron
+    restart: always
+    entrypoint: [ "/bin/sh", "-c", "cron -f" ]
+    depends_on:
+      - api-fastapi
     networks:
       - my_custom_network
 

@@ -1,0 +1,140 @@
+services:
+
+  traefik:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"  # Включить API Traefik
+      - "--providers.docker=true"  # Включить провайдер Docker
+      - "--entrypoints.http.address=:80"  # Настроить точку входа для HTTP
+      - "--entrypoints.https.address=:443"  # Настроить точку входа для HTTPS
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"  # Настройка HTTP-01 challenge
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=http"
+      - "--certificatesresolvers.myresolver.acme.email=abakarov_gm1@mail.ru"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"  # Хранилище сертификатов
+    ports:
+      - "8080:8080"  # Порт для панели управления Traefik
+      - "80:80"  # Порт для HTTP трафика
+      - "443:443"  # Порт для HTTPS трафика
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"  # Подключение Docker сокета
+      - "letsencrypt:/letsencrypt"  # Хранилище для сертификатов Let's Encrypt
+    networks:
+      - my_custom_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=my_custom_network"
+
+
+  api:
+    build:
+      context: ./backend/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - api-fastapi
+      - client-node
+    networks:
+      - my_custom_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`api.abakarov`)"
+      - "traefik.http.services.api.loadbalancer.server.port=80"
+      - "traefik.docker.network=my_custom_network"
+      - "traefik.http.routers.api.entryPoints=http"
+      - "traefik.http.routers.api-secure.entryPoints=https"
+      - "traefik.http.routers.api-secure.rule=Host(`api.abakarov.store`)"
+      - "traefik.http.routers.api-secure.tls.certresolver=myresolver"
+
+  client:
+    build:
+      context: ./client/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8002:80"
+    volumes:
+      - ./client:/app
+    depends_on:
+      - api-fastapi
+      - client-node
+    networks:
+      - my_custom_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.panel.rule=Host(`panel.abakarov`)"
+      - "traefik.http.services.panel.loadbalancer.server.port=80"
+      - "traefik.docker.network=my_custom_network"
+      - "traefik.http.routers.panel.entryPoints=http"
+      - "traefik.http.routers.panel-secure.entryPoints=https"
+      - "traefik.http.routers.panel-secure.rule=Host(`panel.abakarov.store`)"
+      - "traefik.http.routers.panel-secure.tls.certresolver=myresolver"
+
+  client-node:
+    build:
+      context: client/
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./client:/app
+    networks:
+      - my_custom_network
+
+  api-fastapi:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+    networks:
+      - my_custom_network
+    environment:
+      UPLOAD_DIR: uploads
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: app
+      JWT_SECRET_KEY: "secret"
+
+  database:
+    image: postgres:14.1-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: app
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    networks:
+      - my_custom_network
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - my_custom_network
+
+  cron:
+    build:
+      context: ./cron
+      dockerfile: Dockerfile
+    container_name: cron
+    restart: always
+    entrypoint: [ "/bin/sh", "-c", "cron -f" ]
+    depends_on:
+      - api-fastapi
+    networks:
+      - my_custom_network
+
+
+
+networks:
+  my_custom_network:
+    external: true
+
+volumes:
+  db-volume:
+    driver: local
+

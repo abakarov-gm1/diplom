@@ -7,11 +7,6 @@ from config import redis_client
 from service.superservice.token_new import get_xml_entity
 
 from service.superservice.competition_service import generate
-
-from repositories.CompetitionGroup_repository import get_competition_group_id_array
-
-from repositories.Competition_repository import abakarov
-
 router = APIRouter()
 
 

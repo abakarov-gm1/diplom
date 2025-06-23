@@ -11,7 +11,7 @@ from .application import get_full_applications
 from repositories.Competition_repository import add_competition_bulk
 
 from repositories.entrant_repository import add_all_entrant
-
+from repositories.application_repositories import add_applications_from_super_service
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # from new_session import session_key
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -81,6 +81,10 @@ def get_xml_entity(action: str, entity: str, flag):
         c = convert_xml_json(decode_payload_base64(payload_base))
 
         if entity == "ApplicationList" and flag:
+            add_applications_from_super_service(c["SuccessResultList"]['Application'])
+            return {"Message": "success"}
+
+        if entity == "ApplicationList" and flag and action == "GetDirect":
             get_full_applications(c["SuccessResultList"]['Application'])
             return {"Message": "success"}
 

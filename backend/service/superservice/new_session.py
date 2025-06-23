@@ -42,5 +42,5 @@ def get_session():
         verify=False
     )
     resp = response.json()
-    redis_client.set("session-key", resp["Session-Key"], ex=43200)
+    redis_client.set("session-key", resp["Session-Key"], ex=39600)
     return resp["Session-Key"]

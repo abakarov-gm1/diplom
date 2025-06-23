@@ -1,13 +1,12 @@
 import React, {useEffect, useRef, useState} from "react";
 import { Card } from "./Card";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-// import StickyHeadTable from "../components/Tables"
 import ReactVirtualizedTable from "./Tables"
 import SubmissionMethodChart from "./CardStatements";
 import SubmissionDynamicsChart from "./charts";
 const Dashboard = () => {
 
     const [tableData, setTableData] = useState([]);
+    const [registerData, setRegisterData] = useState([]);
     const [isConnected, setIsConnected] = useState(false);
     const ws = useRef(null);
 
@@ -24,8 +23,8 @@ const Dashboard = () => {
             try {
                 const message = JSON.parse(event.data);
                 console.log('Received:', message);
-                // setTableData(...[message]);
-                setTableData(message);
+                setTableData(message?.table_data);
+                setRegisterData(message?.registration_data)
 
             } catch (e) {
                 console.error('Error parsing message:', e);
@@ -48,7 +47,22 @@ const Dashboard = () => {
         };
     }, []);
 
+    const countByDate = registerData.reduce((acc, item) => {
+        const date = item.registration_data;
+        acc[date] = (acc[date] || 0) + 1;
+        return acc;
+    }, {});
+
+    const result = Object.entries(countByDate).map(([date, value]) => ({
+        date,
+        value
+    }));
+
+
+    result.sort((a, b) => new Date(a.date) - new Date(b.date));
+
     console.log(tableData)
+    console.log(result, "RESSSSSSSSS");
 
     return (
         <div>
@@ -89,27 +103,27 @@ const Dashboard = () => {
                     <div style={{display:"flex", height:"15%"}}>
                         <Card value={tableData[tableData.length - 1]?.all_number_places} w="l"/>
                         <Card value={tableData[tableData.length - 1]?.all_applications} title='подано' w="l"/>
-                        <Card value={tableData[tableData.length - 1]?.all_status_enrolled} title='отозвано' w="l"/>
-                        <Card value={tableData[tableData.length - 1]?.all_status_refusal} w="l"/>
+                        <Card value={tableData[tableData.length - 1]?.all_status_refusal} title='отозвано' w="l"/>
+                        <Card value={tableData[tableData.length - 1]?.all_status_enrolled} w="l"/>
                     </div>
 
                     <div style={{height: "30%", display: "flex", justifyContent:"center", marginTop:"10px"}}>
-                        <div style={{width: "25%"}}>
-                            <SubmissionMethodChart/>
+                        <div style={{width: "100%"}}>
+                            <SubmissionMethodChart data={tableData}/>
                         </div>
-                        <div style={{width: "25%"}}>
-                            <SubmissionMethodChart/>
-                        </div>
-                        <div style={{width: "25%"}}>
-                            <SubmissionMethodChart/>
-                        </div>
-                        <div style={{width: "25%"}}>
-                            <SubmissionMethodChart/>
-                        </div>
+                        {/*<div style={{width: "25%"}}>*/}
+                        {/*    <SubmissionMethodChart/>*/}
+                        {/*</div>*/}
+                        {/*<div style={{width: "25%"}}>*/}
+                        {/*    <SubmissionMethodChart/>*/}
+                        {/*</div>*/}
+                        {/*<div style={{width: "25%"}}>*/}
+                        {/*    <SubmissionMethodChart/>*/}
+                        {/*</div>*/}
                     </div>
 
                     <div style={{height:"35%"}}>
-                        <SubmissionDynamicsChart />
+                        <SubmissionDynamicsChart registerData={result} />
                     </div>
 
                 </div>

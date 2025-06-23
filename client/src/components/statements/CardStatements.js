@@ -1,11 +1,46 @@
 import React from "react";
 
-const SubmissionMethodChart = () => {
-    const data = [
-        { label: "Лично", value: 46.07, color: "#8b5cf6" },      // фиолетовый
-                // сине-зеленый
-        { label: "Суперсервис", value: 18.87, color: "#312e81" }, // темно-синий
-    ];
+const SubmissionMethodChart = ({ data }) => {
+    // Проверка и преобразование данных
+    const chartData = data.reduce((acc, item) => {
+        const personalCount = Number(item?.count_not_egpy || 0);
+        const serviceCount = Number(item?.count_egpy || 0);
+
+        return [
+            ...acc,
+            {
+                label: "Лично",
+                value: personalCount,
+                color: "#8b5cf6",
+                percent: (personalCount / (personalCount + serviceCount || 1)) * 100
+            },
+            {
+                label: "Суперсервис",
+                value: serviceCount,
+                color: "#312e81",
+                percent: (serviceCount / (personalCount + serviceCount || 1)) * 100
+            }
+        ];
+    }, []);
+
+    // Группируем данные по типу (Лично/Суперсервис)
+    const groupedData = chartData.reduce((acc, item) => {
+        const existing = acc.find(i => i.label === item.label);
+        if (existing) {
+            existing.value += item.value;
+            existing.percent += item.percent;
+        } else {
+            acc.push({ ...item });
+        }
+        return acc;
+    }, []);
+
+    // Нормализуем проценты
+    const totalPercent = groupedData.reduce((sum, item) => sum + item.percent, 0);
+    const normalizedData = groupedData.map(item => ({
+        ...item,
+        percent: totalPercent > 0 ? (item.percent / totalPercent) * 100 : 50
+    }));
 
     return (
         <div
@@ -22,7 +57,7 @@ const SubmissionMethodChart = () => {
                 Способ подачи
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                {data.map((item, index) => (
+                {normalizedData.map((item, index) => (
                     <div key={index}>
                         <div
                             style={{
@@ -33,7 +68,9 @@ const SubmissionMethodChart = () => {
                             }}
                         >
                             <span style={{ fontSize: "14px" }}>{item.label}</span>
-                            <span style={{ fontSize: "14px" }}>{item.value.toFixed(2)}%</span>
+                            <span style={{ fontSize: "14px" }}>
+                {item.percent.toFixed(2)}%
+              </span>
                         </div>
                         <div
                             style={{
@@ -45,7 +82,7 @@ const SubmissionMethodChart = () => {
                         >
                             <div
                                 style={{
-                                    width: `${item.value}%`,
+                                    width: `${item.percent}%`,
                                     backgroundColor: item.color,
                                     height: "16px",
                                     borderRadius: "9999px",
