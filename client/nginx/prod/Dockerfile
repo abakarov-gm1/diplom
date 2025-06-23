@@ -16,7 +16,7 @@ FROM nginx:alpine
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Кастомный конфиг nginx (если нужен)
-COPY conf.d /etc/nginx/conf.d
+COPY ./conf.d /etc/nginx/conf.d
 
 EXPOSE 80
 #CMD ["nginx", "-g", "daemon off;"]
