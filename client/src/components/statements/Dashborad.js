@@ -11,7 +11,8 @@ const Dashboard = () => {
     const ws = useRef(null);
 
     useEffect(() => {
-        const socketUrl = `ws://localhost:8000/ws/1/your_token_here`;
+        // const socketUrl = `ws://localhost:8000/ws/1/your_token_here`;
+        const socketUrl = `ws://92.255.79.234:8001/ws/1/your_token_here`;
         ws.current = new WebSocket(socketUrl);
 
         ws.current.onopen = () => {
