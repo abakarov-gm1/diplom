@@ -1,0 +1,97 @@
+services:
+
+  api:
+    build:
+      context: ./backend/nginx/prod
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - api-fastapi
+      - client-node
+    networks:
+      - my_custom_network
+
+  client:
+    build:
+      context: ./client/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8002:80"
+    volumes:
+      - ./client:/app
+    depends_on:
+      - api-fastapi
+      - client-node
+    networks:
+      - my_custom_network
+
+  client-node:
+    build:
+      context: client/
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./client:/app
+    networks:
+      - my_custom_network
+
+  api-fastapi:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+    networks:
+      - my_custom_network
+    environment:
+      UPLOAD_DIR: uploads
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: app
+      JWT_SECRET_KEY: "secret"
+
+  database:
+    image: postgres:14.1-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: app
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    networks:
+      - my_custom_network
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - my_custom_network
+
+  cron:
+    build:
+      context: ./cron
+      dockerfile: Dockerfile
+    container_name: cron
+    restart: always
+    entrypoint: [ "/bin/sh", "-c", "cron -f" ]
+    depends_on:
+      - api-fastapi
+    networks:
+      - my_custom_network
+
+
+
+networks:
+  my_custom_network:
+    external: true
+
+volumes:
+  db-volume:
+    driver: local
+  letsencrypt:
