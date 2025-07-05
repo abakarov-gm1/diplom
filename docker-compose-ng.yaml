@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     container_name: nginx
     ports:
-      - "8001:80"
+      - "8001:12309"
     volumes:
       - ./backend:/app
     depends_on:
@@ -19,7 +19,7 @@ services:
       context: ./client
       dockerfile: nginx/prod/Dockerfile
     ports:
-      - "80:80"
+      - "12309:12309"
     volumes:
       - ./client:/app
     depends_on:
