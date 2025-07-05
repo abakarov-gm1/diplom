@@ -13,7 +13,7 @@ def encoded_data():
 
 
 def encode_signed_file_to_base64():
-    file_path = os.path.join(os.path.dirname(__file__), "06_Signed_Data.p7s")
+    file_path = os.path.join(os.path.dirname(__file__), "07_signed_data.p7s")
 
     with open(file_path, "rb") as file:
         file_data = file.read()
